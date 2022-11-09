@@ -9,7 +9,8 @@
         "tag_line":"A Blog For Coders",
         "fb_url":"https://facebook.com/clean_blog",
         "tw_url":"https://twitter.com/clean_blog",
-        "gb_url":"https:github.com/flask_learning"
+        "gb_url":"https:github.com/flask_learning",
+        "no_of_posts":4
     },
     "email_data":{
         "sender_email":"manthan1.citrusbug@gmail.com",

@@ -54,7 +54,7 @@ class Posts(db.Model):
 # Index Function for rendering index.html page
 @app.route('/')
 def index():
-    posts_data = Posts.query.all()
+    posts_data = Posts.query.filter_by().all()[0:config_data['template_data']['no_of_posts']]
     return render_template('index.html', custom_data = config_data['template_data'],posts_data = posts_data)
 
 
@@ -102,6 +102,10 @@ def post(post_slug):
     post_data = Posts.query.filter_by(slug = post_slug).first()
     return render_template('post.html', custom_data = config_data['template_data'],post_data=post_data)
 
-
+# post function for redering post.html page
+@app.route('/post/',methods=['GET'])
+def semple_post():
+    post_data = Posts.query.all()[0]
+    return render_template('post.html', custom_data = config_data['template_data'],post_data=post_data)
 # for run app
 app.run(debug=True)
