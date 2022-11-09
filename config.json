@@ -1,0 +1,18 @@
+{
+    "params":{
+        "local_server":"True",
+        "local_uri":"mysql+pymysql://root:@localhost/clean_blog",
+        "prod_uri":"mysql+pymysql://root:@localhost/clean_blog"
+    },
+    "template_data":{
+        "title":"Clean Code",
+        "tag_line":"A Blog For Coders",
+        "fb_url":"https://facebook.com/clean_blog",
+        "tw_url":"https://twitter.com/clean_blog",
+        "gb_url":"https:github.com/flask_learning"
+    },
+    "email_data":{
+        "sender_email":"manthan1.citrusbug@gmail.com",
+        "sender_pass":"yarfedbozcaqaghr"
+    }
+}
