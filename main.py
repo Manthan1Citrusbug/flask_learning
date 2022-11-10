@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, redirect
 from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -10,7 +10,7 @@ with open('config.json','r') as config_file:
 
 # create app
 app = Flask(__name__)
-
+app.config['SECRET_KEY'] = "login_secret_key"
 # Configure Mail 
 app.config.update(
     MAIL_SERVER = 'smtp.gmail.com',
@@ -49,7 +49,15 @@ class Posts(db.Model):
     slug = db.Column(db.String(50), nullable = False)
     content = db.Column(db.String(120), nullable = False)
     date = db.Column(db.String(12), nullable = False)
+    created_by = db.Column(db.Integer, nullable = False)
 
+
+# create User Class for database 
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    username = db.Column(db.String(20), nullable = False)
+    email = db.Column(db.String(30), nullable = False)
+    password = db.Column(db.String(30), nullable = False)
 
 # Index Function for rendering index.html page
 @app.route('/')
@@ -58,12 +66,10 @@ def index():
     return render_template('index.html', custom_data = config_data['template_data'],posts_data = posts_data)
 
 
-
 # About Function for rendering about.html page
 @app.route('/about')
 def about():
     return render_template('about.html', custom_data = config_data['template_data'])
-
 
 
 # Contact function for redering contact.html page
@@ -94,8 +100,6 @@ def contact():
     # Outside POST requset (default request is get request)
     return render_template('contact.html', custom_data = config_data['template_data'])
 
-
-
 # post function for redering post.html page
 @app.route('/post/<string:post_slug>',methods=['GET'])
 def post(post_slug):
@@ -107,5 +111,63 @@ def post(post_slug):
 def semple_post():
     post_data = Posts.query.all()[0]
     return render_template('post.html', custom_data = config_data['template_data'],post_data=post_data)
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/dashboard")
+
+
+
+
+# ADMIN PANEL
+@app.route('/dashboard', methods = ['GET','POST'])
+def dashboard():
+    if request.method == 'POST':
+        if 'is_login' not in session:
+            usermail = request.form.get('email')
+            userpass = request.form.get('password')
+            try:
+                userValue = User.query.filter_by(email = usermail, password = userpass).first()
+                session['is_login'] = True
+                session['login_data'] = userValue.id
+            except:
+                return render_template('login.html', custom_data = config_data['template_data'], error = "Data Invalid")
+
+    if 'is_login' in session:
+        posts_data = Posts.query.filter_by(created_by = session['login_data']).all()
+        return render_template('dashboard.html', custom_data = config_data['template_data'], posts_data = posts_data)
+    return render_template('login.html', custom_data = config_data['template_data'])
+
+# edit function for redering edit.html page and edit post data
+@app.route('/edit/<string:post_slug>', methods=['GET','POST'])
+def edit(post_slug):
+    if 'is_login' in session:
+        if request.method == 'POST':
+            title = request.form.get('name')
+            subtitle = request.form.get('subtitle')
+            content = request.form.get('content')
+
+            post_data = Posts.query.filter_by(slug = post_slug).first()
+            post_data.title = title
+            post_data.subtitle = subtitle
+            post_data.content = content
+            db.session.commit()
+            return redirect('/dashboard')
+
+        post_data = Posts.query.filter_by(slug = post_slug).first()
+        return render_template('edit.html', custom_data = config_data['template_data'],post=post_data)
+    else:
+        return redirect('/dashboard')
+
+# edit function for redering edit.html page and edit post data
+@app.route('/delete/<string:post_slug>', methods=['GET','POST'])
+def delete(post_slug):
+    if 'is_login' in session:
+        post_data = Posts.query.filter_by(slug = post_slug).first()
+        db.session.delete(post_data)
+        db.session.commit()
+    return redirect('/dashboard')
+
 # for run app
 app.run(debug=True)

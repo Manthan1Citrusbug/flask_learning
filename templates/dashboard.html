@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block main_content %}
+    <!-- Page Header-->
+    {% set back_img = url_for('static', filename='assets/img/home-bg.jpg') %}
+    <header class="masthead" style="background-image: url('{{ back_img }}')" >
+        <div class="container position-relative px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <div class="site-heading">
+                        <h1>Admin Pannel</h1>
+                        <span class="subheading">Your Blog is Here</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Main Content-->
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-10">
+                    
+                    <!-- Use this post for for loop  --> 
+                    <!-- max item 4 -->
+                    <table class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Content</th>
+                            <th scope="col">Date</th>
+                            <th scope="col" colspan="2">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            {% for post in posts_data %}
+                                <tr>
+                                    <th scope="row">{{ post.id }}</th>
+                                    <td>{{ post.title }}</td>
+                                    <td>{{ post.content[0:50] }}...</td>
+                                    <td>{{ post.date }}</td>
+                                    <td><a class="btn btn-primary" href="/edit/{{ post.slug }}">Edit</a></td>
+                                    <td><a class="btn btn-primary" href="/delete/{{ post.slug }}">Delete</a></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                      </table>
+                </div>
+            </div>
+        </div>
+        
+{% endblock %}
