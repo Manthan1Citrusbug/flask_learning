@@ -11,7 +11,7 @@
                 <div class="col-md-10 col-lg-8 col-xl-7">
                     <div class="site-heading">
                         <h1>Admin Pannel</h1>
-                        <span class="subheading">Your Blog is Here</span>
+                        <span class="subheading">Your Blogs are Here</span>
                     </div>
                 </div>
             </div>
@@ -20,8 +20,7 @@
     <!-- Main Content-->
         <div class="container px-4 px-lg-5">
             <div class="row gx-4 gx-lg-5 justify-content-center">
-                <div class="col-md-10 col-lg-8 col-xl-10">
-                    
+                <div class="col-md-10 col-lg-8 col-xl-10"></div>
                     <!-- Use this post for for loop  --> 
                     <!-- max item 4 -->
                     <table class="table">
@@ -41,8 +40,8 @@
                                     <td>{{ post.title }}</td>
                                     <td>{{ post.content[0:50] }}...</td>
                                     <td>{{ post.date }}</td>
-                                    <td><a class="btn btn-primary" href="/edit/{{ post.slug }}">Edit</a></td>
-                                    <td><a class="btn btn-primary" href="/delete/{{ post.slug }}">Delete</a></td>
+                                    <td><a class="btn btn-action btn-primary" href="/edit/{{ post.slug }}">Edit</a></td>
+                                    <td><a class="btn btn-action btn-primary" href="/delete/{{ post.slug }}">Delete</a></td>
                                 </tr>
                             {% endfor %}
                         </tbody>

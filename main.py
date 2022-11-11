@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, session, redirect
 from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from sqlalchemy.exc import IntegrityError, PendingRollbackError
 import json
 
 # include config file and de jasonify it 
@@ -106,12 +107,6 @@ def post(post_slug):
     post_data = Posts.query.filter_by(slug = post_slug).first()
     return render_template('post.html', custom_data = config_data['template_data'],post_data=post_data)
 
-# post function for redering post.html page
-@app.route('/post/',methods=['GET'])
-def semple_post():
-    post_data = Posts.query.all()[0]
-    return render_template('post.html', custom_data = config_data['template_data'],post_data=post_data)
-
 @app.route("/logout")
 def logout():
     session.clear()
@@ -136,10 +131,35 @@ def dashboard():
 
     if 'is_login' in session:
         posts_data = Posts.query.filter_by(created_by = session['login_data']).all()
-        return render_template('dashboard.html', custom_data = config_data['template_data'], posts_data = posts_data)
+        return render_template('dashboard.html', custom_data = config_data['template_data'], posts_data = posts_data, login = session['login_data'])
     return render_template('login.html', custom_data = config_data['template_data'])
 
 # edit function for redering edit.html page and edit post data
+
+@app.route('/add', methods=['GET','POST'])
+def add():
+    if 'is_login' in session:
+        if request.method == 'POST':
+            title = request.form.get('name')
+            subtitle = request.form.get('subtitle')
+            content = request.form.get('content')
+            slug = title.lower()
+            slug = slug.replace(' ',"-")
+
+            try:
+                post_data = Posts(title=title, subtitle = subtitle, slug = slug, content = content, date = datetime.now(), created_by = session['login_data'])
+                db.session.add(post_data)
+                db.session.commit()
+            except IntegrityError:
+                return render_template('add.html', custom_data = config_data['template_data'],error = "This Heading is already available")
+            # save data into the database
+            return redirect('/dashboard')
+
+        return render_template('add.html', custom_data = config_data['template_data'])
+    else:
+        return redirect('/dashboard')
+
+
 @app.route('/edit/<string:post_slug>', methods=['GET','POST'])
 def edit(post_slug):
     if 'is_login' in session:
@@ -147,12 +167,19 @@ def edit(post_slug):
             title = request.form.get('name')
             subtitle = request.form.get('subtitle')
             content = request.form.get('content')
-
-            post_data = Posts.query.filter_by(slug = post_slug).first()
-            post_data.title = title
-            post_data.subtitle = subtitle
-            post_data.content = content
-            db.session.commit()
+            edit_slug = title.lower()
+            edit_slug = edit_slug.replace(' ',"-")
+            try:
+                post_data = Posts.query.filter_by(slug = post_slug).first()
+                post_data.title = title
+                post_data.subtitle = subtitle
+                post_data.content = content
+                post_data.slug = edit_slug
+                db.session.commit()
+            except (PendingRollbackError, IntegrityError):
+                db.session.rollback()
+                post_data = Posts.query.filter_by(slug = post_slug).first()
+                return render_template('edit.html', custom_data = config_data['template_data'], post=post_data, error = "This Heading is already available")
             return redirect('/dashboard')
 
         post_data = Posts.query.filter_by(slug = post_slug).first()

@@ -1969,6 +1969,7 @@ progress {
   color: #212529;
   vertical-align: top;
   border-color: #dee2e6;
+  font-family: "Open Sans","-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 .table > :not(caption) > * > * {
   padding: 0.5rem 0.5rem;
@@ -2994,6 +2995,11 @@ textarea.form-control-lg {
 .btn:disabled, .btn.disabled, fieldset:disabled .btn {
   pointer-events: none;
   opacity: 0.65;
+}
+
+.btn-action {
+    padding: 10px 20px;
+    border-radius: 15px;
 }
 
 .btn-primary {

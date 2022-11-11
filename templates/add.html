@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+{% block title %}Add Post{% endblock %}
+
+{% block main_content %}
+
+        <!-- Page Header-->
+        {% set back_img = url_for('static', filename = 'assets/img/contact-bg.jpg') %}
+        <header class="masthead" style="background-image: url('{{ back_img }}')">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="page-heading">
+                            <h1>Add an Post</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Main Content-->
+        <main class="mb-4">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <h3>Add Your New Post Here...</h3>
+                        <div class="my-5">
+                            <form id="contactForm" action="/add" method="post" data-sb-form-api-token="API_TOKEN">
+                                <div class="form-floating">
+                                    <input class="form-control" name="name" id="name" type="text" placeholder="Enter your name..." data-sb-validations="required"/>
+                                    <label for="name">Title</label>
+                                </div>
+                                <div class="form-floating">
+                                    <input class="form-control" name="subtitle" id="subtitle" type="text" placeholder="Enter your subtitle..." data-sb-validations="required,email" />
+                                    <label for="subtitle">sub title</label>
+                                </div>
+                                <div class="form-floating">
+                                    <textarea class="form-control" name="content" id="content" placeholder="Enter your content here..." style="height: 12rem" data-sb-validations="required"></textarea>
+                                    <label for="content">content</label>
+                                </div>
+                                {% if error != None %}
+                                    <div class="text-center text-danger mb-3">{{ error }}</div>
+                                {% endif %}
+                                <br />
+                                <button class="btn btn-primary text-uppercase" id="submitButton" type="submit">Add</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+{% endblock %}
