@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError, PendingRollbackError
 import json
+import math
 
 # include config file and de jasonify it 
 with open('config.json','r') as config_file:
@@ -63,8 +64,30 @@ class User(db.Model):
 # Index Function for rendering index.html page
 @app.route('/')
 def index():
-    posts_data = Posts.query.filter_by().all()[0:config_data['template_data']['no_of_posts']]
-    return render_template('index.html', custom_data = config_data['template_data'],posts_data = posts_data)
+    cur_page = request.args.get('page')
+    posts_data = Posts.query.filter_by().all()
+    # devide length of posts_data by page_per_post and get greater no as last_page
+    last_page = math.ceil(len(posts_data)/int(config_data['template_data']['posts_per_page']))
+    if(not str(cur_page).isnumeric() ):
+        cur_page = 1
+    else:
+        cur_page = int(cur_page)
+    
+    # getting post as posts_per_page value set and send it to template
+    starting_post_no = (cur_page - 1)*int(config_data['template_data']['posts_per_page'])
+    posts_data = posts_data[ starting_post_no :  starting_post_no + int(config_data['template_data']['posts_per_page'])]
+
+    if cur_page == 1:
+        prev_page = '/'
+        next_page = '/?page='+str(cur_page+1)
+    elif cur_page == last_page:
+        prev_page = '/?page='+str(cur_page-1)
+        next_page = ''
+    else:
+        prev_page = '/?page='+str(cur_page-1)
+        next_page = '/?page='+str(cur_page+1)
+    
+    return render_template('index.html', custom_data = config_data['template_data'],posts_data = posts_data, next=next_page, prev=prev_page)
 
 
 # About Function for rendering about.html page
