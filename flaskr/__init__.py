@@ -24,16 +24,15 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    # a simple page that says hello
-    @app.route('/hello')
-    def hello():
-        return 'Hello, World!'
-
-    from . import db
+    from . import db, auth, blog, admin
     db.init_app(app)
-    
-    from . import auth
+
+    # Register Blueprint of different applications
     app.register_blueprint(auth.bp)
+    app.register_blueprint(blog.bp)
+    app.add_url_rule('/', endpoint='index') # it consider / url for index function 
+    app.register_blueprint(admin.bp)
+    
 
 
     return app

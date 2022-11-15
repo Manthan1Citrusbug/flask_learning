@@ -1,0 +1,53 @@
+{% extends "blog/layout.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block main_content %}
+    <!-- Page Header-->
+    {% set back_img = url_for('static', filename='assets/img/home-bg.jpg') %}
+    <header class="masthead" style="background-image: url('{{ back_img }}')" >
+        <div class="container position-relative px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <div class="site-heading">
+                        <h1>Title</h1>
+                        <span class="subheading">Tagline</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Main Content-->
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    
+                    <!-- Use this post for for loop  --> 
+                    <!-- max item 4 -->
+                    {% for post in posts %}
+                        <!-- Post preview-->
+                        <div class="post-preview">
+                            <a href="{{url_for('blog.post', id=post.id)}}">
+                                <h2 class="post-title">{{ post.title }}</h2>
+                                <h3 class="post-subtitle">{{ post.subtitle }}</h3>
+                            </a>
+                            <p class="post-meta">
+                                Posted by Admin 
+                                on {{ post.date }}
+                            </p>
+                        </div>
+                        <!-- Divider-->
+                        <hr class="my-4" />
+                    {% endfor %}
+
+                    
+                    <!-- Pager-->
+                    <div class="d-flex justify-content-between mb-4">
+                        <a class="btn btn-primary text-uppercase" href="{{prev}}">← Older Posts</a>
+                        <a class="btn btn-primary text-uppercase" href="{{next}}">Newer Posts →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+{% endblock %}
